@@ -33,7 +33,7 @@ permissions:
   contents: read
 
 env:
-  SEO: "github:Grovlix/seo-autopilot#6b90ca727f11791b3fcbf340bef54c2f76d1d0c7"
+  SEO: "https://codeload.github.com/Grovlix/seo-autopilot/tar.gz/6b90ca727f11791b3fcbf340bef54c2f76d1d0c7"
 
 jobs:
   build:

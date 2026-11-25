@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      SEO: "github:Grovlix/seo-autopilot#6b90ca727f11791b3fcbf340bef54c2f76d1d0c7"
+      SEO: "https://codeload.github.com/Grovlix/seo-autopilot/tar.gz/6b90ca727f11791b3fcbf340bef54c2f76d1d0c7"
     steps:
       # Anyone who can label issues could otherwise start the agent: only people with write access may approve.
       - name: Check that the person who approved has write access
