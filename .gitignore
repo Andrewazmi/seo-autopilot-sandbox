@@ -1,0 +1,4 @@
+.seo-autopilot/
+*service-account*.json
+.env
+seo-autopilot/logs/

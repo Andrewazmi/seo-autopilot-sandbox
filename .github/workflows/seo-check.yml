@@ -1,0 +1,64 @@
+# seo-autopilot: checks every pull request opened from an SEO branch (seo/*). It runs your normal build with NO secrets and
+# READ-ONLY permissions, so project code that runs during the build cannot reach anything valuable, whatever text the
+# pull request's content came from. Make this check "required" in your branch protection to block a bad merge.
+#
+# EDIT the build command if yours is not `npm run build`.
+name: seo-check
+on:
+  pull_request:
+    branches: [main, master]
+  # Called by the scheduled seo-autopilot workflow with the drafted branch. No secrets are passed to it.
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      base:
+        type: string
+        required: true
+  # Started by seo-implement on the drafted branch right after it opens the pull request: a pull request opened with the
+  # workflow token starts no pull_request run, but a dispatch does, and its result shows on the pull request's commit.
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "The seo/ branch to check"
+        type: string
+        required: true
+      base:
+        description: "The branch the pull request merges into"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  SEO: "github:Grovlix/seo-autopilot#6b90ca727f11791b3fcbf340bef54c2f76d1d0c7"
+
+jobs:
+  build:
+    if: startsWith(github.head_ref, 'seo/') || startsWith(inputs.ref, 'seo/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || '' }}
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund || { echo "::warning::npm ci rejected package-lock.json (often a different npm version than the one that wrote it). Falling back to npm install for this check; regenerate and commit the lockfile when you can."; npm install --no-audit --no-fund; }
+          elif [ -f package.json ]; then npm install --no-audit --no-fund; fi
+      - name: Build and validate the content
+        run: npm run build
+      # Every number, price, award or client claim in the changed content must be in verified-facts.json or carry a source.
+      # Warns by default; set "facts": { "strict": true } in seo-autopilot.config.json to make an unverified claim fail the check.
+      - name: Facts guard on the changed content
+        env:
+          BASE: ${{ inputs.base || github.base_ref }}
+        run: |
+          files=$(git diff --name-only "origin/$BASE...HEAD" -- '*.json' '*.md' '*.mdx' | { grep -v '^seo-autopilot' || true; } | paste -sd, -)
+          if [ -n "$files" ]; then npx --yes "$SEO" run facts --files "$files"; else echo "No content files changed."; fi

@@ -1,0 +1,27 @@
+{
+  "stateDir": ".seo-autopilot",
+  "dataDir": "seo-autopilot",
+  "sites": [
+    {
+      "id": "example-com",
+      "name": "Sandbox",
+      "url": "https://example.com/",
+      "searchConsoleProperty": "https://example.com/",
+      "sitemap": "https://example.com/sitemap.xml",
+      "indexNow": {
+        "keyEnv": "INDEXNOW_KEY"
+      },
+      "inspectPerDay": 60,
+      "indexNowPerDay": 10,
+      "ga4PropertyId": null,
+      "ignoreQueries": [],
+      "brandTerms": [
+        "Sandbox"
+      ],
+      "content": {
+        "type": "markdown",
+        "dir": "content"
+      }
+    }
+  ]
+}
