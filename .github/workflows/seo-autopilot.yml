@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEO: "https://codeload.github.com/Grovlix/seo-autopilot/tar.gz/932689c9f3f7383803b0de0246197ce674bd0776"
+  SEO: "https://codeload.github.com/Grovlix/seo-autopilot/tar.gz/11ee4ca30ffdbda8cd3a37ece64e441454ddfcd1"
 
 jobs:
   pick:
