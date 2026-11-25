@@ -11,6 +11,9 @@ permissions:
   contents: read
 jobs:
   check:
+    permissions:
+      contents: read
+      statuses: write
     uses: ./.github/workflows/seo-check.yml
     with:
       ref: ${{ inputs.branch }}
@@ -22,6 +25,7 @@ jobs:
     permissions:
       checks: read
       contents: read
+      statuses: read
     steps:
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,3 +36,4 @@ jobs:
           echo "run sha (caller): $GITHUB_SHA"; echo "branch head: $head"
           echo "check runs on caller sha:"; gh api "repos/$GH_REPO/commits/$GITHUB_SHA/check-runs" --jq '.check_runs[] | "\(.name) \(.conclusion)"'
           echo "check runs on branch head:"; gh api "repos/$GH_REPO/commits/$head/check-runs" --jq '.check_runs[] | "\(.name) \(.conclusion)"'
+          echo "commit statuses on branch head:"; gh api "repos/$GH_REPO/commits/$head/status" --jq ".statuses[] | \"\(.context) \(.state)\""
